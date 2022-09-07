@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>geranos_parameter_estimation</name>
+  <version>0.0.0</version>
+  <description>
+    parameter estimation for geranos 
+  </description>
+
+  <maintainer email="rafael.todo@todo.com">rafael</maintainer>
+
+
+
+  <license>ASL 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>mav_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>cmake_modules</depend>
+  <depend>geometry_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
+  <depend>rw_module_base</depend>
+  <depend>rw_control_utils</depend>
+  <depend>eigen_conversions</depend>
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+</package>
