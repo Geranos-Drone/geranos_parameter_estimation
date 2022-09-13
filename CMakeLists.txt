@@ -26,8 +26,14 @@ add_definitions(-std=c++11 -fPIC -Werror -Wall -Wno-reorder -Wno-unknown-pragmas
 cs_add_library(geranos_parameter_estimation_lib
   src/geranos_parameter_estimator.cpp
 )
+
+
 cs_add_executable(mass_and_inertia_estimator_node
   src/geranos_parameter_estimator.cpp
+)
+
+cs_add_executable(mass_inertia_com_estimator_node
+  src/geranos_full_parameter_estimator.cpp
 )
 
 include_directories(SYSTEM "${LIB_DIR}/Include")

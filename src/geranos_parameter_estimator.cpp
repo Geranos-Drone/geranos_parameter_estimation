@@ -54,41 +54,41 @@ public:
 	float delta_t = 1/frequency;
 
 	//position of center of mass in body frame
-	VectorXd x_com = VectorXd(3);
+/*	VectorXd x_com = VectorXd(3);*/
 
 
 
 	//position of main propellers in body frame:
-	VectorXd r_0 = VectorXd(3);
+/*	VectorXd r_0 = VectorXd(3);
 	VectorXd r_1 = VectorXd(3);
 	VectorXd r_2 = VectorXd(3);
-	VectorXd r_3 = VectorXd(3);
+	VectorXd r_3 = VectorXd(3);*/
 
 
 
 
 	//position of auxiliary propellers in body frame:
-	VectorXd r_4 = VectorXd(3);
+/*	VectorXd r_4 = VectorXd(3);
 	VectorXd r_5 = VectorXd(3);
 	VectorXd r_6 = VectorXd(3);
-	VectorXd r_7 = VectorXd(3);
+	VectorXd r_7 = VectorXd(3);*/
 
 
 
 
 	//direction of main propellers in body frame:
-	VectorXd d_0 = VectorXd(3);
+/*	VectorXd d_0 = VectorXd(3);
 	VectorXd d_1 = VectorXd(3);
 	VectorXd d_2 = VectorXd(3);
-	VectorXd d_3 = VectorXd(3);
+	VectorXd d_3 = VectorXd(3);*/
 
 
 
 	//direction of auxiliary propellers in body frame:
-	VectorXd d_4 = VectorXd(3);
+/*	VectorXd d_4 = VectorXd(3);
 	VectorXd d_5 = VectorXd(3);
 	VectorXd d_6 = VectorXd(3);
-	VectorXd d_7 = VectorXd(3);
+	VectorXd d_7 = VectorXd(3);*/
 
 
 
@@ -100,14 +100,14 @@ public:
 
 	//force and moment constant of rotors
 		//in newton/omega^2
-	float cfa = 1.471 * 1e-6; // force constant auxiliary
+/*	float cfa = 1.471 * 1e-6; // force constant auxiliary
 	float cfm = 4.688 * 1e-5; // force constant main
 		// in torque/newton
 	float cta = 1.336 * 1e-2; // moment constant auxiliary
 	float ctm = 2.382 * 1e-2; // moment constatn main
-
+*/
 	//force allocation
-	MatrixXd F_allocation=MatrixXd(3,8);
+	// MatrixXd F_allocation=MatrixXd(3,8);
 
 
 
@@ -320,7 +320,9 @@ public:
 		estimation_msg.mass_estimate = mass;
 		estimation_msg.mass_covariance = P_ekf(12,12);
 		estimation_msg.Jxy_estimate=Jxy;
+		estimation_msg.Jxy_covariance = P_ekf(13,13);
 		estimation_msg.Jz_estimate=Jz;
+		estimation_msg.Jz_covariance = P_ekf(14,14);
 
 		estimation_msg.roll_estimate = roll;
 		estimation_msg.pitch_estimate = pitch;
@@ -424,6 +426,8 @@ public:
 	  //covariance update step:
     P_ekf = A_ekf * P_ekf * A_ekf.transpose() + Q_ekf;
 
+    std::cout << P_ekf << "\n" << std::endl;
+
 
 		//----------------------measurement update
 		h=H_ekf * x_p; //only works because it's linear
@@ -436,8 +440,7 @@ public:
 
     K_ekf = P_ekf * H_ekf.transpose() * S_ekf.inverse();
 
-    std::cout << force_w << std::endl;
-    std::cout << "\n" << std::endl;
+
 
     //measurement state update
     x = x_p + K_ekf * y_ekf;
@@ -514,8 +517,8 @@ public:
 		angles << roll, pitch, yaw;
 		omega << 0,0,0;
 		mass = 9;
-		Jxy = 0.01;
-		Jz = 0.1;
+		Jxy = 0.4;
+		Jz = 0.6;
     J << Jxy, 0, 0,
     		 0, Jxy, 0,
     		 0, 0, Jz;
@@ -524,7 +527,7 @@ public:
 		P_ekf = MatrixXd::Identity(15,15)*1e6;
 
 		//setup parameters:
-		x_com << 0, 0, -0.07;
+/*		x_com << 0, 0, -0.07;
 
 		r_0 << -0.4189, -0.4189, 0;
 		r_1 << -0.4189, 0.4189, 0;
@@ -544,13 +547,13 @@ public:
 		d_4 << -1, 0, 0;
 		d_5 << 0, 1, 0;
 		d_6 << 1, 0, 0;
-		d_7 << 0, -1, 0;
+		d_7 << 0, -1, 0;*/
 
 		// g_vec << 0, 0, -9.8; //-9.80665;
 
-		F_allocation << 0, 0, 0, 0, cfa, 0, -cfa, 0,
+/*		F_allocation << 0, 0, 0, 0, cfa, 0, -cfa, 0,
          				0, 0, 0, 0, 0, -cfa, 0, cfa,
-         				cfm, cfm, cfm, cfm, 0, 0, 0, 0;
+         				cfm, cfm, cfm, cfm, 0, 0, 0, 0;*/
 
 //tuning parameters R covariance:
     r_pos << 1, 1, 1;
@@ -584,7 +587,7 @@ public:
 
 
 //----------ros callback functions---------------
-  void controller_callback(const mav_msgs::TorqueThrust& message){//TODO correct type of message, // Type: mav_msgs/TorqueThrust
+  void controller_callback(const mav_msgs::TorqueThrust& message){// Type: mav_msgs/TorqueThrust
   	//read commanded force and torque
 
   	force_prop << message.thrust.x, message.thrust.y, message.thrust.z;
@@ -594,7 +597,7 @@ public:
 	}
 
 
-  void msf_callback(const nav_msgs::Odometry message){//TODO correct type of message, c orrect reading of message //Type: nav_msgs/Odometry
+  void msf_callback(const nav_msgs::Odometry message){//Type: nav_msgs/Odometry
   	//creat measurement vector z
 
 	  pos_com_m << message.pose.pose.position.x, message.pose.pose.position.y, message.pose.pose.position.z;

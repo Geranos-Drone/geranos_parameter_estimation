@@ -10,5 +10,9 @@ float64 yaw_estimate
 float64 mass_estimate
 float64 mass_covariance
 float64 Jxy_estimate
+float64 Jxy_covariance
 float64 Jz_estimate
+float64 Jz_covariance
+geometry_msgs/Vector3 com_estimate
+
 
