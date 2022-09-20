@@ -331,7 +331,8 @@ public:
 		tf::vectorEigenToMsg(pos_com, estimation_msg.position_estimate);
 		tf::vectorEigenToMsg(vel_com, estimation_msg.velocity_estimate);
 		tf::vectorEigenToMsg(omega, estimation_msg.omega_estimate);
-		
+
+		estimation_msg.header.stamp = ros::Time::now();		
 
 
 		estimate_publisher.publish(estimation_msg);
@@ -347,6 +348,10 @@ public:
 		//calculate rotation matrix from roll, ptich and yaw
 		//delta_t = 1/frequency;
 		angles_to_rot_and_trans();
+		// std::cout << "angles: " << angles<< "\n" << std::endl;
+		// std::cout << "T: " << T << "\n" << std::endl;
+		// std::cout << "R: " << R_total << "\n" << std::endl;
+
 
 		//propeller forces in world frame
 		force_w = R_total * force_prop;
@@ -362,6 +367,9 @@ public:
 		omega_p = omega + delta_t * J.inverse() * (torque_com-omega.cross(J*omega));
 		//mass_p = mass;
 		//J_p = J;
+		// std::cout << "mass: " << mass << "\n" << std::endl;
+		
+		// std::cout << "J: " << J << "\n" << std::endl;
 
 		//full predicted state vector
 		x_p << pos_com_p, vel_com_p, angles_p, omega_p, mass, Jxy, Jz;
@@ -406,6 +414,23 @@ public:
 		R_z_pitch = -fx*croll*cyaw*cpitch - fy*croll*syaw*cpitch -fz*croll*spitch;
 		R_z_yaw = fx*(sroll*cyaw + croll*syaw*spitch) + fy*(-syaw*sroll -croll*cyaw*spitch);
 
+
+		// prevent devision by zero
+		// std::cout << "x_p: " <<x_p << "\n" << std::endl;
+		std::cout << P_ekf << "\n" << std::endl;
+		// std::cout << "x: " << x << "\n" << std::endl;
+		if(mass==0 || Jxy==0 || Jz==0 || cpitch==0){
+			ROS_ERROR_STREAM("devision by zero");
+			abort();
+		}
+		if(isnan(mass) || isnan(Jxy) || isnan(Jz) || isnan(cpitch)){
+			ROS_ERROR_STREAM("nan value");
+			abort();
+		}
+		std::cout << "NEW ITERATION \n" << std::endl;
+
+		
+
 		// linearized state update matrix A_ekf
 		A_ekf << 1, 0, 0, delta_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				     0, 1, 0, 0, delta_t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -426,7 +451,9 @@ public:
 	  //covariance update step:
     P_ekf = A_ekf * P_ekf * A_ekf.transpose() + Q_ekf;
 
-    std::cout << P_ekf << "\n" << std::endl;
+    // std::cout << "A: " << A_ekf << "\n" << std::endl;
+
+    
 
 
 		//----------------------measurement update
@@ -438,12 +465,25 @@ public:
 
     S_ekf = H_ekf * P_ekf *H_ekf.transpose() + R_ekf;
 
+    // std::cout << "S: " << S_ekf << "\n" << std::endl;
+
     K_ekf = P_ekf * H_ekf.transpose() * S_ekf.inverse();
+
+    // std::cout << "K: " << K_ekf << "\n" << std::endl;
 
 
 
     //measurement state update
     x = x_p + K_ekf * y_ekf;
+    // std::cout << "y: " << y_ekf << "\n" << std::endl;
+    // std::cout << "xp: " << x_p << "\n" << std::endl;
+    std::cout << "angvel_z " << x(11) << "\n" << std::endl;
+
+    // really bad fix for diverging omega_z: constraint: bounding omegaz at i
+    if(abs(x(11))>1){
+    	x(11)=abs(x(11))/x(11);
+    	ROS_ERROR_STREAM("omega z  diverges");
+    }
 
 
 

@@ -1,6 +1,5 @@
 
-#std_msgs/Header header
-
+std_msgs/Header header
 geometry_msgs/Vector3 position_estimate
 geometry_msgs/Vector3 velocity_estimate
 geometry_msgs/Vector3 omega_estimate
