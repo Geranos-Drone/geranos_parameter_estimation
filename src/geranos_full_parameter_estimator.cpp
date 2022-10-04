@@ -45,7 +45,7 @@ using Eigen::Matrix3d;
 
 // TODO: Jz estimatin does not work, plot variance of all states
 // plot estimated torque and commanded torque
-
+// service to grab pole? such that i can increase the varinace of the mass for a short time
 
 #define frequency 200.0000
 // the mass and inertia estimator node subscribes to msf and the controller, and publihes the estimated mass and inertia with what rate.

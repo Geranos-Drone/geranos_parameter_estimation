@@ -30,11 +30,12 @@ public:
 	float cfa = 1.21542e-06;//1.471 * 1e-6; // force constant auxiliary
 
 	// real cfm
-	// float cfm = 16.56e-05;//4.688 * 1e-5; // force constant main
+	 // float cfm = 16.56e-05;//4.688 * 1e-5; // force constant main
 
 	// simulation cfm
+	float cfm = 8.58307e-05;
 
-	 float cfm = 8.58307e-05;
+	 
 		// in torque/newton
 	float cta = 0.011378057;//1.336 * 1e-2; // moment constant auxiliary
 	float ctm = 0.02141697;//2.382 * 1e-2; // moment constatn main

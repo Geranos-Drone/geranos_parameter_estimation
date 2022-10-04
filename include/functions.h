@@ -35,7 +35,7 @@ EulerAngles ToEulerAngles(Quaternion q) {
     double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
     double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
     angles.yaw = std::atan2(siny_cosp, cosy_cosp);
-    std::cout << "\n angles with wikipedia are \n" << angles.roll << "\n" << angles.pitch << "\n" << angles.yaw << std::endl;
+    // std::cout << "\n angles with wikipedia are \n" << angles.roll << "\n" << angles.pitch << "\n" << angles.yaw << std::endl;
 
     //--------------using eigen:
 
@@ -57,10 +57,10 @@ EulerAngles ToEulerAngles(Quaternion q) {
     tf::Matrix3x3 m(rosquat);
     double rollr, pitchr, yawr;
     m.getRPY(rollr, pitchr, yawr);
-    std::cout << "\n angles with ros are \n" << rollr << "\n" << pitchr << "\n" << yawr << std::endl;
+    // std::cout << "\n angles with ros are \n" << rollr << "\n" << pitchr << "\n" << yawr << std::endl;
 
 
-    std::cout << "\n difference is: \n" << rollr - angles.roll << "\n" << pitchr - angles.pitch << "\n" << yawr - angles.yaw << std::endl;
+    // std::cout << "\n difference is: \n" << rollr - angles.roll << "\n" << pitchr - angles.pitch << "\n" << yawr - angles.yaw << std::endl;
 
 
 

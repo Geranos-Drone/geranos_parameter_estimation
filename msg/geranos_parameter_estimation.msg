@@ -12,6 +12,9 @@ float64 Jxy_estimate
 float64 Jxy_covariance
 float64 Jz_estimate
 float64 Jz_covariance
+float64 com_z
+float64 com_z_covariance
 geometry_msgs/Vector3 com_estimate
+geometry_msgs/Vector3 torque_com
 
 
