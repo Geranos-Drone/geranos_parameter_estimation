@@ -339,7 +339,7 @@ public:
 		pos_com_p = pos_com + delta_t * vel_com;
 		vel_com_p = vel_com + delta_t * (force_w / mass + g_vec);
 		angles_p = angles+delta_t*T.inverse() * omega;
-		omega_p = omega + delta_t * J.inverse() * (torque_o_prop + force_w.cross(com) - omega.cross(J*omega));
+		omega_p = omega + delta_t * J.inverse() * (torque_o_prop + com.cross(force_w) - omega.cross(J*omega));
 		//mass_p = mass;
 		//J_p = J;
 		//comz_p = comz;

@@ -40,9 +40,19 @@ cs_add_executable(mass_comz_inertia_estimator_node
   src/geranos_parameter_estimation_observable.cpp
 )
 
-cs_add_executable(mass_com_estimator_node
+cs_add_executable(mass_comz_estimator_node
   src/geranos_parameter_estimation_no_inertia.cpp
 )
+
+cs_add_executable(geranos_mass_jxy_comz_estimator_node
+  src/geranos_mass_jxy_comz_estimator.cpp
+)
+
+
+
+
+
+
 
 include_directories(SYSTEM "${LIB_DIR}/Include")
 
