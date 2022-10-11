@@ -563,6 +563,8 @@ A = [1, 0, 0, Delta_t,       0,       0,                                        
     com_z = x(14);
     com << com_x, com_y, com_z;
 
+    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << "\n" << std::endl;
+
   }
 
 

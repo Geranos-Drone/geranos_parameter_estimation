@@ -57,6 +57,10 @@ EulerAngles ToEulerAngles(Quaternion q) {
     tf::Matrix3x3 m(rosquat);
     double rollr, pitchr, yawr;
     m.getRPY(rollr, pitchr, yawr);
+
+    angles.roll = rollr;
+    angles.pitch = pitchr;
+    angles.yaw = yawr;
     // std::cout << "\n angles with ros are \n" << rollr << "\n" << pitchr << "\n" << yawr << std::endl;
 
 
