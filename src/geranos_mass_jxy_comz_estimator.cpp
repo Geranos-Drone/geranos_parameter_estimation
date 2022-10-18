@@ -256,7 +256,7 @@ public:
 
 	ros::Subscriber msf_sub = n.subscribe("geranos/msf_core/odometry", 1000, &Mass_inertia_estimator::msf_callback, this); // TODO correct topic name
 	// ros::Subscriber controller_sub = n.subscribe("geranos/command/motor_speed", 1000, &Mass_inertia_estimator::controller_callback, this); // /geranos/command/motor_speed
-	ros::Subscriber controller_sub_wrench = n.subscribe("geranos/wrench_target", 1000, &Mass_inertia_estimator::controller_callback_wrench, this); // commanded wrench in origin
+	ros::Subscriber controller_sub_wrench = n.subscribe("geranos/controller_node/wrench_sat", 1000, &Mass_inertia_estimator::controller_callback_wrench, this); // commanded wrench in origin
 // Type: mav_msgs/Actuators
 
 
@@ -563,7 +563,10 @@ A = [1, 0, 0, Delta_t,       0,       0,                                        
     com_z = x(14);
     com << com_x, com_y, com_z;
 
-    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << "\n covariane mass: " << P_ekf(12,12) <<"\n" << std::endl;
+    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << std::endl;
+    std::cout <<" covariane mass: " << P_ekf(12,12) << std::endl;
+    std::cout <<" covariane Jxy: " << P_ekf(13,13)  << std::endl;	
+    std::cout <<" covariane com_z: " << P_ekf(14,14) << std::endl;
 
   }
 
