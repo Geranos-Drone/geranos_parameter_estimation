@@ -202,6 +202,14 @@ public:
 	//identity matrix
 	MatrixXd Identity_15 = MatrixXd::Identity(15,15);
 
+	// observability matrix
+	MatrixXd Observability = MatrixXd(15*12,15);
+	MatrixXd Observability_squared= MatrixXd(15,15);
+	VectorXd singular_values = VectorXd(15);
+	float min_singular_value;
+	float norm_projection;
+	float determinant;
+
 
 	//------helper variables:
 	//partial derivatives:
@@ -307,6 +315,9 @@ public:
 		estimation_msg.com_z_covariance = P_ekf(14,14);
 		estimation_msg.Jxy_estimate = Jxy;
 		estimation_msg.Jxy_covariance = P_ekf(13,13);
+		estimation_msg.minimal_singular_value = min_singular_value;
+		estimation_msg.force_torque_projection = norm_projection;
+		estimation_msg.O_determinant = determinant;
 
 		estimation_msg.roll_estimate = roll;
 		estimation_msg.pitch_estimate = pitch;
@@ -567,6 +578,48 @@ A = [1, 0, 0, Delta_t,       0,       0,                                        
     std::cout <<" covariane mass: " << P_ekf(12,12) << std::endl;
     std::cout <<" covariane Jxy: " << P_ekf(13,13)  << std::endl;	
     std::cout <<" covariane com_z: " << P_ekf(14,14) << std::endl;
+
+
+    /*calculate observability matrix and singular values:*/
+    /*H
+    	H*A
+    	...
+    	H*A^13*/
+    Observability << H_ekf,
+    								 H_ekf*A_ekf,
+    								 H_ekf*A_ekf*A_ekf,
+    								 H_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+    								 H_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf*A_ekf;
+
+    Observability_squared = Observability.transpose() * Observability;
+
+    
+
+    // calculate singular values of observability matrix squared
+    Eigen::JacobiSVD<MatrixXd> svd(Observability_squared);
+    singular_values << svd.singularValues(); 
+    min_singular_value = singular_values[14];
+    determinant = Observability_squared.determinant();
+   
+
+    // std::cout << "singular values: \n" << singular_values <<std::endl;
+    // std::cout << "smallest singular value: \n" << min_singular_value <<std::endl;
+
+    /*calculate projection normalized torque to force*/
+
+    norm_projection = abs(force_prop.transpose() * torque_o_prop) / (force_prop.norm() * torque_o_prop.norm());// TODO check if in matlab alos torque in origin
+
+
 
   }
 
