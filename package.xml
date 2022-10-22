@@ -17,6 +17,8 @@
 
   <depend>mav_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+<!--   <depend>Empty</depend> -->
   <depend>cmake_modules</depend>
   <depend>geometry_msgs</depend>
   <depend>roscpp</depend>

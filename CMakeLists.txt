@@ -48,6 +48,9 @@ cs_add_executable(geranos_mass_jxy_comz_estimator_node
   src/geranos_mass_jxy_comz_estimator.cpp
 )
 
+cs_add_executable(test_client_node
+  src/test_client.cpp
+)
 
 
 
