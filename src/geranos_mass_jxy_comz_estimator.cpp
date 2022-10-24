@@ -174,9 +174,12 @@ public:
 	Vector3d q_angles;
 	Vector3d q_omega;
 	float q_mass;
+	float q_mass_det;
 	float q_Jxy;
 	float q_Jz;
 	float q_com_z;
+	float q_com_z_det;
+	float q_Jxy_det;
 
 	float is_mass_set;
 	float timer;
@@ -304,9 +307,12 @@ public:
 		q_angles << config.Q_orient, config.Q_orient, config.Q_orient;
 		q_omega << config.Q_angvel, config.Q_angvel, config.Q_angvel;
 		q_mass = config.Q_mass;
+		q_mass_det = q_mass;
 		q_Jxy = config.Q_Jxy;
+		q_Jxy_det = q_Jxy;
 		// q_Jz = config.Q_Jz;
 		q_com_z = config.Q_com;
+		q_com_z_det = q_com_z;
 		q_ekf << q_pos, q_vel, q_angles, q_omega, q_mass,q_Jxy, q_com_z;
 		Q_ekf = q_ekf.asDiagonal();
 
@@ -366,6 +372,7 @@ public:
 		vel_com_p = vel_com + delta_t * (force_w / mass + g_vec);
 		angles_p = angles+delta_t*T.inverse() * omega;
 		omega_p = omega + delta_t * J.inverse() * (torque_o_prop + force_prop.cross(com) - omega.cross(J*omega));
+
 		//mass_p = mass;
 		//J_p = J;
 		//com_p = com;
@@ -456,9 +463,9 @@ public:
 		h << pos_com_p, vel_com_p, angles_p, omega_p;
 		// std::cout << "x_p by h calc" << x_p << "\n" << std::endl;
     y_ekf = z - h;
-    std::cout << "z by y calc\n" << z << "\n" << std::endl;
-    std::cout << "h by y calc\n" << h << "\n" << std::endl;
-    std::cout << "y after calculation\n" << y_ekf << "\n" << std::endl;
+    // std::cout << "z by y calc\n" << z << "\n" << std::endl;
+    // std::cout << "h by y calc\n" << h << "\n" << std::endl;
+    // std::cout << "y after calculation\n" << y_ekf << "\n" << std::endl;
 
 
  
@@ -579,10 +586,10 @@ public:
     com_z = x(14);
     com << com_x, com_y, com_z;
 
-/*    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << std::endl;
+    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << std::endl;
     std::cout <<" covariane mass: " << P_ekf(12,12) << std::endl;
     std::cout <<" covariane Jxy: " << P_ekf(13,13)  << std::endl;	
-    std::cout <<" covariane com_z: " << P_ekf(14,14) << std::endl;*/
+    std::cout <<" covariane com_z: " << P_ekf(14,14) << std::endl;
 
 
     /*calculate observability matrix and singular values:*/
@@ -622,7 +629,23 @@ public:
 
     /*calculate projection normalized torque to force*/
 
+    /*adjust q depending on determinant threshold */
+    if (determinant < 0.005){
+    	q_com_z = 0;
+    	q_Jxy = 0;
+    	q_mass = q_mass_det;
+
+    }
+    else {
+    	q_com_z = q_com_z_det;
+    	q_Jxy = q_Jxy_det;
+    	q_mass = 0;
+    }
+
+
+
     norm_projection = abs(force_prop.transpose() * torque_o_prop) / (force_prop.norm() * torque_o_prop.norm());// TODO check if in matlab alos torque in origin
+
 
 
 
@@ -703,6 +726,8 @@ public:
 		q_angles << 1, 1, 1;
 		q_omega << 1, 1, 1;
 		q_mass = 1;
+		q_mass_det = 1;
+
 		q_Jxy = 1;
 		q_Jz = 1;
 		q_ekf << q_pos, q_vel, q_angles, q_omega, q_mass, q_Jxy, q_Jz;
