@@ -364,6 +364,8 @@ public:
 		angles_to_rot_and_trans();
 
 		//propeller forces in world frame
+		// std::cout << "\n Rotation matrix: \n " << R_total << std::endl;
+		// std::cout << "\n force_prop: \n " << force_prop << std::endl;
 		force_w = R_total * force_prop;
 		// std::cout << "\n force world:  " << force_w << std::endl;
 
@@ -430,30 +432,12 @@ public:
 		     		 0, 0, 0,       0,       0,       0,                                                                                                                                                                0,     			                                                                                         0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                 			 0,                                                     			   1,                  0,
 		     		 0, 0, 0,       0,       0,       0,                                                                                                                                                                0,     			                                                                                         0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                 			 0,                                                     			   0,                  1;
 
-/*
-     	    [1, 0, 0, Delta_t,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 1, 0,       0, Delta_t,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 1,       0,       0, Delta_t,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 0,       1,       0,       0,                                                                                                                                                                0,            (Delta_t*(f_z*cos(pitch) - f_x*cos(yaw)*sin(pitch) + f_y*sin(pitch)*sin(yaw)))/mass,                                                                                          -(Delta_t*cos(pitch)*(f_y*cos(yaw) + f_x*sin(yaw)))/mass,                                 0,                                0,                                 0,                                                                             -(Delta_t*(f_z*sin(pitch) + f_x*cos(pitch)*cos(yaw) - f_y*cos(pitch)*sin(yaw)))/mass^2,                                                                     0,                  0]
-					[0, 0, 0,       0,       1,       0, -(Delta_t*(f_x*(sin(roll)*sin(yaw) - cos(roll)*cos(yaw)*sin(pitch)) + f_y*(cos(yaw)*sin(roll) + cos(roll)*sin(pitch)*sin(yaw)) + f_z*cos(pitch)*cos(roll)))/mass,  (Delta_t*sin(roll)*(f_z*sin(pitch) + f_x*cos(pitch)*cos(yaw) - f_y*cos(pitch)*sin(yaw)))/mass, (Delta_t*f_x*(cos(roll)*cos(yaw) - sin(pitch)*sin(roll)*sin(yaw)))/mass - (Delta_t*f_y*(cos(roll)*sin(yaw) + cos(yaw)*sin(pitch)*sin(roll)))/mass,                                 0,                                0,                                 0, -(Delta_t*(f_x*(cos(roll)*sin(yaw) + cos(yaw)*sin(pitch)*sin(roll)) + f_y*(cos(roll)*cos(yaw) - sin(pitch)*sin(roll)*sin(yaw)) - f_z*cos(pitch)*sin(roll)))/mass^2,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       1,  (Delta_t*(f_x*(cos(roll)*sin(yaw) + cos(yaw)*sin(pitch)*sin(roll)) + f_y*(cos(roll)*cos(yaw) - sin(pitch)*sin(roll)*sin(yaw)) - f_z*cos(pitch)*sin(roll)))/mass, -(Delta_t*cos(roll)*(f_z*sin(pitch) + f_x*cos(pitch)*cos(yaw) - f_y*cos(pitch)*sin(yaw)))/mass, (Delta_t*f_x*(cos(yaw)*sin(roll) + cos(roll)*sin(pitch)*sin(yaw)))/mass - (Delta_t*f_y*(sin(roll)*sin(yaw) - cos(roll)*cos(yaw)*sin(pitch)))/mass,                                 0,                                0,                                 0, -(Delta_t*(f_x*(sin(roll)*sin(yaw) - cos(roll)*cos(yaw)*sin(pitch)) + f_y*(cos(yaw)*sin(roll) + cos(roll)*sin(pitch)*sin(yaw)) + f_z*cos(pitch)*cos(roll)))/mass^2,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                1,      (Delta_t*sin(pitch)*(omega_x*(2*sin(yaw/2)^2 - 1) + omega_y*sin(yaw)))/(sin(pitch)^2 - 1),                                                                                       -(Delta_t*(omega_y*cos(yaw) + omega_x*sin(yaw)))/cos(pitch),     (Delta_t*cos(yaw))/cos(pitch),   -(Delta_t*sin(yaw))/cos(pitch),                                 0,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              1,                                                                                                     Delta_t*(omega_x*cos(yaw) - omega_y*sin(yaw)),                  Delta_t*sin(yaw),                 Delta_t*cos(yaw),                                 0,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                  -(Delta_t*(omega_x*cos(yaw) - omega_y*sin(yaw)))/cos(pitch)^2,                                                        (Delta_t*omega_y*cos(yaw)*sin(pitch) + Delta_t*omega_x*sin(pitch)*sin(yaw))/cos(pitch) + 1,      -Delta_t*cos(yaw)*tan(pitch),      Delta_t*tan(pitch)*sin(yaw),                           Delta_t,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 1, (Delta_t*omega_z*(Jxy - Jz))/Jxy,  (Delta_t*omega_y*(Jxy - Jz))/Jxy,                                                                                                                                                                  0, -(Delta_t*(tau_x + com_z*f_y - com_y*f_z - Jz*omega_y*omega_z))/Jxy^2,  (Delta_t*f_y)/Jxy]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0, -(Delta_t*omega_z*(Jxy - Jz))/Jxy,                                1, -(Delta_t*omega_x*(Jxy - Jz))/Jxy,                                                                                                                                                                  0, -(Delta_t*(tau_y - com_z*f_x + com_x*f_z + Jz*omega_x*omega_z))/Jxy^2, -(Delta_t*f_x)/Jxy]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 1,                                                                                                                                                                  0,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  1,                                                                     0,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  0,                                                                     1,                  0]
-					[0, 0, 0,       0,       0,       0,                                                                                                                                                                0,                                                                                              0,                                                                                                                                                 0,                                 0,                                0,                                 0,                                                                                                                                                                  0,                                                                     0,                  1]
-
-*/
 
 
 	  //covariance update step:
     P_ekf = A_ekf * P_ekf * A_ekf.transpose() + Q_ekf;
 
-     // std::cout << "A" <<A_ekf << "\n" << std::endl;
+    //  std::cout << "A" <<A_ekf << "\n" << std::endl;
 
     // std::cout << "q_mass in _Q" << Q_ekf(12,12) << "\n" << std::endl;
 
@@ -586,11 +570,11 @@ public:
     com_z = x(14);
     com << com_x, com_y, com_z;
 
-    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << std::endl;
+/*    std::cout << "\n mass: " << mass << "\n Jxy: " << Jxy << "\n com z: " << com_z << std::endl;
     std::cout <<" covariane mass: " << P_ekf(12,12) << std::endl;
     std::cout <<" covariane Jxy: " << P_ekf(13,13)  << std::endl;	
     std::cout <<" covariane com_z: " << P_ekf(14,14) << std::endl;
-
+*/
 
     /*calculate observability matrix and singular values:*/
     /*H
@@ -630,7 +614,7 @@ public:
     /*calculate projection normalized torque to force*/
 
     /*adjust q depending on determinant threshold */
-    if (determinant < 0.005){
+/*    if (determinant < 0.005){
     	q_com_z = 0;
     	q_Jxy = 0;
     	q_mass = q_mass_det;
@@ -640,13 +624,11 @@ public:
     	q_com_z = q_com_z_det;
     	q_Jxy = q_Jxy_det;
     	q_mass = 0;
-    }
+    }*/
 
 
 
     norm_projection = abs(force_prop.transpose() * torque_o_prop) / (force_prop.norm() * torque_o_prop.norm());// TODO check if in matlab alos torque in origin
-
-
 
 
   }
@@ -657,6 +639,15 @@ public:
 //calculate rotationmatrix and T from roll pitch yaw angles:
   
 	void angles_to_rot_and_trans(){
+
+		// std::cout << "roll, pitch, yaw" << "\n" << roll <<"\n" << pitch << "\n" << yaw << std::endl;
+
+		if(abs(roll)>6){
+			roll = 0;
+		}
+		if(abs(pitch)>6){
+			pitch = 0;
+		}
 
 	 	R_yaw << cos(yaw), -sin(yaw), 0,
 	       	 	 sin(yaw), cos(yaw), 0,
@@ -690,6 +681,7 @@ public:
 		roll = 0;
 		pitch = 0;
 		yaw = 0;
+		force_prop << 0,0,0;
 		angles << roll, pitch, yaw;
 		omega << 0,0,0;
 		mass = 9;
@@ -700,9 +692,10 @@ public:
     		 0, 0, Jz;
 
     //initial covariance
-		P_ekf = MatrixXd::Identity(15,15)*1e6;
+		P_ekf = MatrixXd::Identity(15,15)*1e-2;
 
 		//setup parameters:
+		com_z = -0.07;
 		com << 0, 0, -0.07;
 		// com << 0, 0, -0.00;
 
@@ -749,26 +742,8 @@ public:
 
 // set q_mass to 0
 		bool set_q_mass_zero(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-			std::cout << "mass service called" << std::endl;
+			// std::cout << "mass service called" << std::endl;
 			// if this is called, the process covariance q_mass is cradually decreased 
-/*			timer = ros::Time::now().toSec();
-			is_mass_set = false;
-
-			std::cout << "time measured" << std::endl;
-
-			// 
-			while (!is_mass_set){
-
-				if (ros::Time::now().toSec() > timer + 2){
-					timer = ros::Time::now().toSec();
-					q_mass /= 100;
-					std::cout << "q mass is: " << q_mass << std::endl;
-
-					if (q_mass < 1e-12){
-						is_mass_set = true;
-					}
-				}
-			}*/
 
 			q_mass = 0;
 			q_ekf << q_pos, q_vel, q_angles, q_omega, q_mass,q_Jxy, q_com_z;
@@ -813,6 +788,9 @@ public:
   	force_prop << message.thrust.x, message.thrust.y, message.thrust.z;
   	torque_o_prop << message.torque.x, message.torque.y, message.torque.z;
 
+  	// std::cout << "force prop callback: \n" << force_prop << std::endl;
+  	// std::cout << "torque o porp callback: \n" << torque_o_prop << std::endl;
+
   	// std::cout << "torque difference wrench_target, calculated wrench: " << torque_com_wrench_test - torque_o_prop << std::endl;
 
 
@@ -840,14 +818,14 @@ public:
 
 		angles_m << eulerangles.roll, eulerangles.pitch, eulerangles.yaw;
 
-		// std::cout << "angles_m \n" << angles_m << std::endl;
+		// std::cout << "angles_m in callback \n" << angles_m << std::endl;
 
 		omega_m << message.twist.twist.angular.x, message.twist.twist.angular.y, message.twist.twist.angular.z;
 		
 
   	z << pos_com_m, vel_com_m, angles_m, omega_m;
 
-  	// std::cout << "z \n" << z << std::endl;
+  	// std::cout << "z in callback \n" << z << std::endl;
 	}
 
 	//loop function, is called in main
@@ -871,14 +849,6 @@ public:
   ~Mass_inertia_estimator(){}
 
 };
-
-
-
-
-
-
-
-
 
 
 

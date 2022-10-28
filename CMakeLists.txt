@@ -52,6 +52,9 @@ cs_add_executable(test_client_node
   src/test_client.cpp
 )
 
+cs_add_executable(ground_truth_node
+  src/ground_truth.cpp
+)
 
 
 
