@@ -72,6 +72,8 @@ public:
 	double mass_pole;
 	double inertia_pole;
 
+	int pole_nr = 0;
+
 
 
 	/*callback functions*/
@@ -82,6 +84,7 @@ public:
 		mass_pole = mass_pole1;
 		inertia_pole = inertia_xy_pole1;
 		update();
+		pole_nr = 1;
 		return true;
 	}
 
@@ -92,6 +95,7 @@ public:
 		mass_pole = mass_pole2;
 		inertia_pole = inertia_xy_pole2;
 		update();
+		pole_nr = 2;
 		return true;
 	}
 
@@ -102,6 +106,7 @@ public:
 		mass_pole = mass_pole3;
 		inertia_pole = inertia_xy_pole3;
 		update();
+		pole_nr = 3;
 		return true;
 	}
 
@@ -112,30 +117,43 @@ public:
 		mass_pole = mass_pole4;
 		inertia_pole = inertia_xy_pole4;
 		update();
+		pole_nr = 4;
 		return true;
 	}
 
 	bool drop_p_1(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
 		std::cout << "GT drop pole 1" << std::endl;
-		carrying_pole = false;
+		if(pole_nr==1){
+			carrying_pole = false;
+		}
+		update();
 		return true;
 	}
 
 	bool drop_p_2(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
 		std::cout << "GT drop pole 2" << std::endl;
-		carrying_pole = false;
+		if(pole_nr==2){
+			carrying_pole = false;
+		}
+		update();
 		return true;
 	}
 
 	bool drop_p_3(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
 		std::cout << "GT drop pole 3" << std::endl;
-		carrying_pole = false;
+		if(pole_nr==3){
+			carrying_pole = false;
+		}
+		update();
 		return true;
 	}
 
 	bool drop_p_4(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
 		std::cout << "GT drop pole 4" << std::endl;
-		carrying_pole = false;
+		if(pole_nr==4){
+			carrying_pole = false;
+		}
+		update();
 		return true;
 	}
 
