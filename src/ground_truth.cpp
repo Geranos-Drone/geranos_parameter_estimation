@@ -16,7 +16,14 @@
 #include <std_srvs/SetBool.h>
 
 
+/*
+This node calculates the ground truth mass, inertra xx = yy and center of mass z-position
+Assumptions: 	
+	roll = pitch = 0
+	xy position drone =  xy position of grabbed pole
+	only one pole at the time
 
+*/
 
 class Ground_truth{
 public:
