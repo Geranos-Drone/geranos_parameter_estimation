@@ -58,7 +58,7 @@ public:
 	const double mass_pole4 = 2.0;
 	double mass;
 
-	const double inertia_xy_drone = 0.05;
+	const double inertia_xy_drone = 0.5;
 	const double inertia_xy_pole1 = 0.04166666;
 	const double inertia_xy_pole2 = 0.1875;
 	const double inertia_xy_pole3 = 0.5;
