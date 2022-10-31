@@ -66,7 +66,7 @@ public:
 	double inertia;
 
 	const double com_z_drone = -0.0662; // becaues of propellers on top
-	const double com_z_pole1 = 0.25;
+	const double com_z_pole1 = 0.5;
 	const double com_z_pole2 = 0.75;
 	const double com_z_pole3 = 1.0;
 	const double com_z_pole4 = 1.25;
@@ -187,7 +187,7 @@ public:
 	/*calculate com_z*/
 	void calculate_com_z(){ //position of com wtr. to body origin in body frame
 		if(carrying_pole){
-			com_z = (mass_pole*com_pole + mass_drone*com_z_drone) / (mass);
+			com_z = (mass_pole*com_pole + mass_drone*com_z_drone) / (mass_drone + mass_pole);
 		}
 		else{
 			com_z = com_z_drone;
