@@ -28,7 +28,7 @@ Assumptions:
 class Ground_truth{
 public:
 
-	/*ros stuff*/
+	/***ros stuff***/
 
 	/*service*/
 	ros::NodeHandle n;
@@ -51,7 +51,7 @@ public:
 
 
 	/*parameters*/
-	const double mass_drone = 7;
+	const double mass_drone = 7.25;
 	const double mass_pole1 = 0.5;
 	const double mass_pole2 = 1.0;
 	const double mass_pole3 = 1.5;
@@ -65,7 +65,7 @@ public:
 	const double inertia_xy_pole4 = 1.041666;
 	double inertia;
 
-	const double com_z_drone = -0.07;
+	const double com_z_drone = -0.0662; // becaues of propellers on top
 	const double com_z_pole1 = 0.25;
 	const double com_z_pole2 = 0.75;
 	const double com_z_pole3 = 1.0;
@@ -164,7 +164,7 @@ public:
 		return true;
 	}
 
-	void msf_callback(const nav_msgs::Odometry message){//Type: nav_msgs/Odometry
+	void msf_callback(const nav_msgs::Odometry message){
 	  pos_z = message.pose.pose.position.z;
 	}
 
@@ -184,7 +184,7 @@ public:
 		}
 	}
 
-
+	/*calculate com_z*/
 	void calculate_com_z(){ //position of com wtr. to body origin in body frame
 		if(carrying_pole){
 			com_z = (mass_pole*com_pole + mass_drone*com_z_drone) / (mass);
@@ -195,7 +195,7 @@ public:
 	}
 
 
-
+	/*calculate inertia*/
 	void calculate_inertia(){ // xx , yy yinertia in com
 		if(carrying_pole){
 			inertia = inertia_xy_drone + pow((com_z - com_z_drone),2)*mass_drone  +  inertia_pole + pow((com_z - com_pole),2) * mass_pole;
@@ -214,17 +214,12 @@ public:
 
 	void get_gt(){
 		
-
 		gt_msg.gt_mass = mass;
 		gt_msg.gt_Jxy = inertia;
 		gt_msg.gt_com_z = com_z;
 		gt_msg.header.stamp = ros::Time::now();	
 
-
-
 		gt_publisher.publish(gt_msg);
-
-
 	}
 
 };
@@ -245,16 +240,15 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "ground_truth_node");
   ros::NodeHandle n;
   
-  Ground_truth the_thruth;
-  the_thruth.update();
+  Ground_truth gt;
+  gt.update();
 
-  // ros::Rate loop_rate(frequency);
+  ros::Rate loop_rate(10);
 
   while (ros::ok()){
-    // My_estimator.iteration();
-  	the_thruth.get_gt();
+  	gt.get_gt();
     ros::spinOnce();
-    // loop_rate.sleep();
+    loop_rate.sleep();
   }
   return 0; 
 }

@@ -70,7 +70,7 @@ public:
 
 	//gravity constant
 	Vector3d g_vec;
-	float gravity_constant = 9.8;
+	float gravity_constant = 9.8066;
 
 
 
