@@ -65,7 +65,7 @@ public:
 	const double inertia_xy_pole4 = 1.041666;
 	double inertia;
 
-	const double com_z_drone = -0.0662; // becaues of propellers on top
+	const double com_z_drone = -0.0662; // becaues of propellers
 	const double com_z_pole1 = 0.55; // length /2 + 0.05 because of ground thickness
 	const double com_z_pole2 = 0.8;
 	const double com_z_pole3 = 1.05;
@@ -74,62 +74,55 @@ public:
 
 	bool carrying_pole = false;
 
-	double pos_z;
-	double com_pole;
+	double pos_z; //z pos of drone in world frame
+	double com_pole; // com_z of pole in body frame
 	double mass_pole;
 	double inertia_pole;
-
-	int pole_nr = 0;
-
 
 
 	/*callback functions*/
 	bool get_p_1(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-		std::cout << "GT grab pole 1" << std::endl;
+		// std::cout << "GT grab pole 1" << std::endl;
 		carrying_pole = true;
-		com_pole = -pos_z + com_z_pole1;
+		com_pole = com_z_pole1 - pos_z;
 		mass_pole = mass_pole1;
 		inertia_pole = inertia_xy_pole1;
 		update();
-		pole_nr = 1;
 		return true;
 	}
 
 	bool get_p_2(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-		std::cout << "GT grab pole 2" << std::endl;
+		// std::cout << "GT grab pole 2" << std::endl;
 		carrying_pole = true;
-		com_pole = -pos_z + com_z_pole2;
+		com_pole = com_z_pole2 - pos_z;
 		mass_pole = mass_pole2;
 		inertia_pole = inertia_xy_pole2;
 		update();
-		pole_nr = 2;
 		return true;
 	}
 
 	bool get_p_3(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-		std::cout << "GT grab pole 3" << std::endl;
+		// std::cout << "GT grab pole 3" << std::endl;
 		carrying_pole = true;
-		com_pole = -pos_z + com_z_pole3;
+		com_pole = com_z_pole3 - pos_z;
 		mass_pole = mass_pole3;
 		inertia_pole = inertia_xy_pole3;
 		update();
-		pole_nr = 3;
 		return true;
 	}
 
 	bool get_p_4(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-		std::cout << "GT grab pole 4" << std::endl;
+		// std::cout << "GT grab pole 4" << std::endl;
 		carrying_pole = true;
-		com_pole = -pos_z + com_z_pole4;
+		com_pole = com_z_pole4 - pos_z;
 		mass_pole = mass_pole4;
 		inertia_pole = inertia_xy_pole4;
 		update();
-		pole_nr = 4;
 		return true;
 	}
 
 	bool drop_p_1(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res){
-		std::cout << "GT drop pole 1" << std::endl;
+		// std::cout << "GT drop pole 1" << std::endl;
 		if(pole_nr==1){
 			carrying_pole = false;
 		}
@@ -170,11 +163,7 @@ public:
 
 
 
-
-
-
 	/*calculate mass:*/
-
 	void calculate_mass(){
 		if(carrying_pole){
 			mass = mass_drone + mass_pole;
@@ -185,7 +174,7 @@ public:
 	}
 
 	/*calculate com_z*/
-	void calculate_com_z(){ //position of com wtr. to body origin in body frame
+	void calculate_com_z(){ //position of com in body frame
 		if(carrying_pole){
 			com_z = (mass_pole*com_pole + mass_drone*com_z_drone) / (mass_drone + mass_pole);
 		}
@@ -193,7 +182,6 @@ public:
 			com_z = com_z_drone;
 		}
 	}
-
 
 	/*calculate inertia*/
 	void calculate_inertia(){ // xx , yy yinertia in com
@@ -205,14 +193,14 @@ public:
 		}
 	}
 
-	void update(){
+
+	void update(){ //calculate gt
 		calculate_mass();
 		calculate_com_z();
 		calculate_inertia();
 	}
 
-
-	void get_gt(){
+	void get_gt(){//publish gt
 		
 		gt_msg.gt_mass = mass;
 		gt_msg.gt_Jxy = inertia;
@@ -223,15 +211,6 @@ public:
 	}
 
 };
-
-
-
-
-
-
-
-
-
 
 
 
