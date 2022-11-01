@@ -66,10 +66,10 @@ public:
 	double inertia;
 
 	const double com_z_drone = -0.0662; // becaues of propellers on top
-	const double com_z_pole1 = 0.5;
-	const double com_z_pole2 = 0.75;
-	const double com_z_pole3 = 1.0;
-	const double com_z_pole4 = 1.25;
+	const double com_z_pole1 = 0.55; // length /2 + 0.05 because of ground thickness
+	const double com_z_pole2 = 0.8;
+	const double com_z_pole3 = 1.05;
+	const double com_z_pole4 = 1.3;
 	double com_z;
 
 	bool carrying_pole = false;
