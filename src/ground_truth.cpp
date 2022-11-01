@@ -78,6 +78,7 @@ public:
 	double com_pole; // com_z of pole in body frame
 	double mass_pole;
 	double inertia_pole;
+	int pole_nr = 0;
 
 
 	/*callback functions*/
@@ -88,6 +89,7 @@ public:
 		mass_pole = mass_pole1;
 		inertia_pole = inertia_xy_pole1;
 		update();
+		pole_nr = 1;
 		return true;
 	}
 
@@ -98,6 +100,7 @@ public:
 		mass_pole = mass_pole2;
 		inertia_pole = inertia_xy_pole2;
 		update();
+		pole_nr = 2;
 		return true;
 	}
 
@@ -108,6 +111,7 @@ public:
 		mass_pole = mass_pole3;
 		inertia_pole = inertia_xy_pole3;
 		update();
+		pole_nr = 3;
 		return true;
 	}
 
@@ -118,6 +122,7 @@ public:
 		mass_pole = mass_pole4;
 		inertia_pole = inertia_xy_pole4;
 		update();
+		pole_nr = 3;
 		return true;
 	}
 
