@@ -216,6 +216,8 @@ public:
 	MatrixXd Observability_squared= MatrixXd(15,15);
 	VectorXd singular_values = VectorXd(15);
 	float min_singular_value;
+	float second_min_singular_value;
+	float third_minimal_singular_value;
 	float norm_projection;
 	float determinant;
 
@@ -333,6 +335,8 @@ public:
 		estimation_msg.Jxy_estimate = Jxy;
 		estimation_msg.Jxy_covariance = P_ekf(13,13);
 		estimation_msg.minimal_singular_value = min_singular_value;
+		estimation_msg.second_minimal_singular_value = second_min_singular_value;
+		estimation_msg.third_minimal_singular_value = third_minimal_singular_value;
 		estimation_msg.force_torque_projection = norm_projection;
 		estimation_msg.O_determinant = determinant;
 
@@ -605,6 +609,9 @@ public:
     Eigen::JacobiSVD<MatrixXd> svd(Observability_squared);
     singular_values << svd.singularValues(); 
     min_singular_value = singular_values[14];
+    second_min_singular_value = singular_values[13];
+    third_minimal_singular_value = singular_values[12];
+
     determinant = Observability_squared.determinant();
    
 

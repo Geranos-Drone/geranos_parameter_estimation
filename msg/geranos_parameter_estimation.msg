@@ -13,6 +13,8 @@ float64 Jxy_covariance
 float64 Jz_estimate
 float64 Jz_covariance
 float64 minimal_singular_value
+float64 second_minimal_singular_value
+float64 third_minimal_singular_value
 float64 force_torque_projection
 float64 O_determinant
 float64 com_z
